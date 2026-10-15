@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trainer Management</title>
+</head>
+<body>
+<h1>Add Trainer</h1>
+
+<form id="trainerForm">
+    <label>Emp ID:</label>
+    <input type="text" id="empId" required>
+    <br>
+
+    <label>Name:</label>
+    <input type="text" id="name" required>
+    <br>
+
+    <label>Email:</label>
+    <input type="email" id="email" required>
+    <br>
+
+    <label>Subject ID:</label>
+    <input type="number" id="subjectId" required>
+    <br>
+
+    <button type="submit">Save Trainer</button>
+</form>
+
+<h2>All Trainers</h2>
+<ul id="trainerList"></ul>
+
+<script>
+    const baseUrl = 'http://localhost:8080';
+
+    async function loadTrainers() {
+        const res = await fetch(baseUrl + '/trainer');
+        const data = await res.json();
+        const list = document.getElementById('trainerList');
+        list.innerHTML = '';
+        data.forEach(t => {
+            const li = document.createElement('li');
+            li.textContent =
+                t.id + ' - ' +
+                t.empId + ' - ' +
+                t.name + ' - ' +
+                t.email + ' - Subject: ' +
+                (t.subject ? (t.subject.id + ' ' + t.subject.name) : 'none');
+            list.appendChild(li);
+        });
+    }
+
+    document.getElementById('trainerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const empId = document.getElementById('empId').value;
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const subjectId = document.getElementById('subjectId').value;
+
+        await fetch(baseUrl + '/trainer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                empId,
+                name,
+                email,
+                subject: { id: Number(subjectId) }
+            })
+        });
+
+        document.getElementById('empId').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('subjectId').value = '';
+
+        loadTrainers();
+    });
+
+    loadTrainers();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+### Add subject
+POST http://localhost:8080/subject
+Content-Type: application/json
+
+{
+  "name": "Java",
+  "description": "Core Java"
+}
+
+### Get all subjects
+GET http://localhost:8080/subject
+Accept: application/json

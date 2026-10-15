@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subject Management</title>
+</head>
+<body>
+<h1>Add Subject</h1>
+
+<form id="subjectForm">
+    <label>Name:</label>
+    <input type="text" id="name" required>
+    <br>
+    <label>Description:</label>
+    <input type="text" id="description">
+    <br>
+    <button type="submit">Save Subject</button>
+</form>
+
+<h2>All Subjects</h2>
+<ul id="subjectList"></ul>
+
+<script>
+    const baseUrl = 'http://localhost:8080';
+
+    async function loadSubjects() {
+        const res = await fetch(baseUrl + '/subject');
+        const data = await res.json();
+        const list = document.getElementById('subjectList');
+        list.innerHTML = '';
+        data.forEach(s => {
+            const li = document.createElement('li');
+            li.textContent = s.id + ' - ' + s.name + ' (' + s.description + ')';
+            list.appendChild(li);
+        });
+    }
+
+    document.getElementById('subjectForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('name').value;
+        const description = document.getElementById('description').value;
+
+        await fetch(baseUrl + '/subject', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description })
+        });
+
+        document.getElementById('name').value = '';
+        document.getElementById('description').value = '';
+        loadSubjects();
+    });
+
+    loadSubjects();
+</script>
+</body>
+</html>
